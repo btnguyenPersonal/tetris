@@ -1,3 +1,4 @@
+# todo change number to be % 100 as the color, and 1-16 as which pieces should connect
 import random
 
 class Piece:
