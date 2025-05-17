@@ -30,6 +30,8 @@ class GameGrid:
         self.setSong()
         self.missSound = pygame.mixer.Sound("missSound.mp3")
         self.hitSound = pygame.mixer.Sound("hitSound.mp3")
+        self.scoreText = ''
+        self.scoreFrames = 0
 
     def setSong(self):
         self.songIndex += 1
@@ -104,6 +106,8 @@ class GameGrid:
         else:
             pygame.mixer.Sound.play(self.hitSound)
             self.score += [0,100,400,900,2500][linesCollected]
+            self.scoreText = ['ERROR','SINGLE!','DOUBLE!','TRIPLE!','TETRIS!!'][linesCollected]
+            self.scoreFrames = 10
 
     def dropPiece(self, hardDrop=False):
         self.piece.row += 1
@@ -253,9 +257,17 @@ class GameGrid:
                     for border in borders:
                         canvas.move(border, self.pixel_width * j, self.pixel_width * i)
         canvas.create_text(self.pixel_width * 11, self.pixel_width * 1, anchor="w", text="NEXT", font=("FixedSys", 20))
-        canvas.create_text(self.pixel_width * 11, self.pixel_width * 5, anchor="w", text="SCORE: " + str(self.score), font=("FixedSys", 20))
-        canvas.create_text(self.pixel_width * 11, self.pixel_width * 6, anchor="w", text="LINES: " + str(self.lines), font=("FixedSys", 20))
-        canvas.create_text(self.pixel_width * 11, self.pixel_width * 7, anchor="w", text="LEVEL: " + str(self.level), font=("FixedSys", 20))
+        if self.scoreFrames > 0:
+            if self.scoreText == 'TETRIS!!':
+                canvas.create_text(self.pixel_width * 11, self.pixel_width * 5, anchor="w", text=self.scoreText, fill='red', font=("FixedSys", 20))
+            else:
+                canvas.create_text(self.pixel_width * 11, self.pixel_width * 5, anchor="w", text=self.scoreText, fill='red', font=("FixedSys", 20))
+            self.scoreFrames -= 1
+        else:
+            self.scoreText = ''
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 6, anchor="w", text="SCORE: " + str(self.score), font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 7, anchor="w", text="LINES: " + str(self.lines), font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 8, anchor="w", text="LEVEL: " + str(self.level), font=("FixedSys", 20))
 
 grid = GameGrid(22, 10, 30)
 root.bind("a", grid.left)
