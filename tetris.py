@@ -1,3 +1,5 @@
+import random
+import pygame
 import copy
 import time
 from tkinter import *
@@ -17,10 +19,23 @@ class GameGrid:
         self.grid = []
         self.level = 0
         self.lines = 0
+        self.score = 0
         self.next_piece = Piece(0, 4)
         for i in range(self.rows):
             self.grid.append([0] * cols)
         self.resetDefaultPieceState()
+        self.songs = ['./bradinsky.mp3', './karinka.mp3', './loginska.mp3', './troika.mp3']
+        self.songIndex = random.randint(0, 3)
+        pygame.mixer.init()
+        self.setSong()
+        self.missSound = pygame.mixer.Sound("missSound.mp3")
+        self.hitSound = pygame.mixer.Sound("hitSound.mp3")
+
+    def setSong(self):
+        self.songIndex += 1
+        self.songIndex %= 4
+        pygame.mixer.music.load(self.songs[self.songIndex])
+        pygame.mixer.music.play(-1)
 
     def getLevelColor(self):
         match self.level % 9:
@@ -61,36 +76,48 @@ class GameGrid:
                     return False
         return True
 
-    def placePiece(self):
+    def placePiece(self, hardDrop):
         piece = self.piece.getPiece()
         for i in range(len(piece)):
             for j in range(len(piece[i])):
                 if piece[i][j] != 0:
                     self.grid[i + self.piece.row][j + self.piece.col] = (99 * 100) + (piece[i][j] % 100)
-        self.collectLines()
+        self.collectLines(hardDrop)
 
-    def collectLines(self):
+    def collectLines(self, hardDrop):
+        linesCollected = 0
         for i in range(len(self.grid)):
             if all(int(x / 100) == 99 for x in self.grid[i]):
+                linesCollected += 1
                 self.lines += 1
                 if self.lines >= (self.level + 1) * 30:
                     self.level += 1
+                    self.setSong()
                 del self.grid[i]
                 self.grid.insert(0, [0] * 10)
+        if linesCollected == 0:
+            pygame.mixer.Sound.play(self.missSound)
+            drop = 1
+            if hardDrop:
+                drop = 2
+            self.score += min(drop * (self.level + 1) * (self.piece.row * (self.level + 1)), 999)
+        else:
+            pygame.mixer.Sound.play(self.hitSound)
+            self.score += [0,100,400,900,2500][linesCollected]
 
-    def dropPiece(self):
+    def dropPiece(self, hardDrop=False):
         self.piece.row += 1
         if self.isValidState():
             return;
         else:
             self.piece.row -= 1
-            self.placePiece()
+            self.placePiece(hardDrop)
             self.resetDefaultPieceState()
         if not self.isValidState():
             self.gameOver = True
 
     def down(self, event):
-        self.dropPiece()
+        self.dropPiece(True)
         self.renderGrid()
 
     def turnRight(self, event):
@@ -171,6 +198,7 @@ class GameGrid:
     def renderGrid(self):
         canvas.delete("all")
         if self.gameOver:
+            print("SCORE: " + str(self.score))
             print("LINES: " + str(self.lines))
             print("LEVEL: " + str(self.level))
             quit()
@@ -225,6 +253,7 @@ class GameGrid:
                     for border in borders:
                         canvas.move(border, self.pixel_width * j, self.pixel_width * i)
         canvas.create_text(self.pixel_width * 12, self.pixel_width * 1, text="NEXT", font=("Arial", 20))
+        canvas.create_text(self.pixel_width * 13, self.pixel_width * 5, text="SCORE: " + str(self.score), font=("Arial", 20))
         canvas.create_text(self.pixel_width * 13, self.pixel_width * 6, text="LINES: " + str(self.lines), font=("Arial", 20))
         canvas.create_text(self.pixel_width * 13, self.pixel_width * 7, text="LEVEL: " + str(self.level), font=("Arial", 20))
 
