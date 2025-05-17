@@ -12,6 +12,12 @@ canvas.pack()
 
 class GameGrid:
     def __init__(self, rows, cols, pixel_width):
+        self.highscore = 0
+        try:
+            with open("highscore") as f:
+                self.highscore = int(f.read())
+        except FileNotFoundError:
+            pass
         self.gameOver = False
         self.rows = rows
         self.cols = cols
@@ -209,6 +215,8 @@ class GameGrid:
             print("SCORE: " + str(self.score))
             print("LINES: " + str(self.lines))
             print("LEVEL: " + str(self.level))
+            with open("highscore", "w") as f:
+                f.write(str(self.score))
             quit()
         renderGrid = copy.deepcopy(self.grid)
         piece = self.piece.getPiece()
@@ -271,9 +279,10 @@ class GameGrid:
             self.scoreFrames -= 1
         else:
             self.scoreText = ''
-        canvas.create_text(self.pixel_width * 11, self.pixel_width * 6, anchor="w", text="SCORE: " + str(self.score), font=("FixedSys", 20))
-        canvas.create_text(self.pixel_width * 11, self.pixel_width * 7, anchor="w", text="LINES: " + str(self.lines), font=("FixedSys", 20))
-        canvas.create_text(self.pixel_width * 11, self.pixel_width * 8, anchor="w", text="LEVEL: " + str(self.level), font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 6, anchor="w", text="HIGHSCORE: " + str(self.highscore), font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 7, anchor="w", text="SCORE: " + str(self.score), font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 8, anchor="w", text="LINES: " + str(self.lines), font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 9, anchor="w", text="LEVEL: " + str(self.level), font=("FixedSys", 20))
 
 grid = GameGrid(22, 10, 30)
 root.bind("a", grid.left)
