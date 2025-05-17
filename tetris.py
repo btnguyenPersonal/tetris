@@ -30,6 +30,7 @@ class GameGrid:
         self.setSong()
         self.missSound = pygame.mixer.Sound("missSound.mp3")
         self.hitSound = pygame.mixer.Sound("hitSound.mp3")
+        self.tetrisSound = pygame.mixer.Sound("tetrisSound.mp3")
         self.scoreText = ''
         self.scoreFrames = 0
 
@@ -104,7 +105,10 @@ class GameGrid:
                 drop = 2
             self.score += min(drop * (self.level + 1) * (self.piece.row * (self.level + 1)), 999)
         else:
-            pygame.mixer.Sound.play(self.hitSound)
+            if linesCollected == 4:
+                pygame.mixer.Sound.play(self.tetrisSound)
+            else:
+                pygame.mixer.Sound.play(self.hitSound)
             self.score += [0,100,400,900,2500][linesCollected]
             self.scoreText = ['ERROR','SINGLE!','DOUBLE!','TRIPLE!','TETRIS!!'][linesCollected]
             self.scoreFrames = 10
