@@ -252,10 +252,10 @@ class GameGrid:
                     canvas.move(rect_id, self.pixel_width * j, self.pixel_width * i)
                     for border in borders:
                         canvas.move(border, self.pixel_width * j, self.pixel_width * i)
-        canvas.create_text(self.pixel_width * 12, self.pixel_width * 1, text="NEXT", font=("Arial", 20))
-        canvas.create_text(self.pixel_width * 13, self.pixel_width * 5, text="SCORE: " + str(self.score), font=("Arial", 20))
-        canvas.create_text(self.pixel_width * 13, self.pixel_width * 6, text="LINES: " + str(self.lines), font=("Arial", 20))
-        canvas.create_text(self.pixel_width * 13, self.pixel_width * 7, text="LEVEL: " + str(self.level), font=("Arial", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 1, anchor="w", text="NEXT", font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 5, anchor="w", text="SCORE: " + str(self.score), font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 6, anchor="w", text="LINES: " + str(self.lines), font=("FixedSys", 20))
+        canvas.create_text(self.pixel_width * 11, self.pixel_width * 7, anchor="w", text="LEVEL: " + str(self.level), font=("FixedSys", 20))
 
 grid = GameGrid(22, 10, 30)
 root.bind("a", grid.left)
