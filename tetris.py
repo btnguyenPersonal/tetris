@@ -143,6 +143,7 @@ class GameGrid:
             case 99:
                 return self.getLevelColor()
 
+    ## TODO fix these
     def isTopConnection(self, renderGrid, i, j):
         try:
             return (renderGrid[i][j] % 100) % 2 == 1 and ((renderGrid[i - 1][j] % 100) >> 1) % 2 == 1
@@ -170,8 +171,8 @@ class GameGrid:
     def renderGrid(self):
         canvas.delete("all")
         if self.gameOver:
-            print("lines: " + str(self.lines))
-            print("level: " + str(self.level))
+            print("LINES: " + str(self.lines))
+            print("LEVEL: " + str(self.level))
             quit()
         renderGrid = copy.deepcopy(self.grid)
         piece = self.piece.getPiece()
@@ -192,7 +193,7 @@ class GameGrid:
                 if not renderGrid[i][j] == 0:
                     border_width = 3
                     if not self.isTopConnection(renderGrid, i, j):
-                        borders.append(canvas.create_rectangle(x, y, x + self.pixel_width, y - border_width, fill='black', outline = ""))
+                        borders.append(canvas.create_rectangle(x - border_width, y, x + self.pixel_width, y - border_width, fill='black', outline = ""))
                     if not self.isLeftConnection(renderGrid, i, j):
                         borders.append(canvas.create_rectangle(x, y, x - border_width, y + self.pixel_width, fill='black', outline = ""))
                     if not self.isBottomConnection(renderGrid, i, j):
@@ -208,11 +209,24 @@ class GameGrid:
             for j in range(len(next_piece[i])):
                 if next_piece[i][j] != 0:
                     x = self.pixel_width * 11
-                    y = 15
+                    y = self.pixel_width * 2
+                    border_width = 3
+                    borders = []
                     rect_id = canvas.create_rectangle(x, y, x+self.pixel_width, y+self.pixel_width, fill=self.getColor(next_piece[i][j]), outline = "")
+                    if not self.isTopConnection(next_piece, i, j):
+                        borders.append(canvas.create_rectangle(x - border_width, y, x + self.pixel_width, y - border_width, fill='black', outline = ""))
+                    if not self.isLeftConnection(next_piece, i, j):
+                        borders.append(canvas.create_rectangle(x, y, x - border_width, y + self.pixel_width, fill='black', outline = ""))
+                    if not self.isBottomConnection(next_piece, i, j):
+                        borders.append(canvas.create_rectangle(x - border_width, y + self.pixel_width - border_width, x + self.pixel_width, y + self.pixel_width, fill='black', outline = ""))
+                    if not self.isRightConnection(next_piece, i, j):
+                        borders.append(canvas.create_rectangle(x + self.pixel_width - border_width, y, x + self.pixel_width, y + self.pixel_width, fill='black', outline = ""))
                     canvas.move(rect_id, self.pixel_width * j, self.pixel_width * i)
-        canvas.create_text(self.pixel_width * 12, self.pixel_width * 3, text="lines: " + str(self.lines), font=("Arial", 20))
-        canvas.create_text(self.pixel_width * 12, self.pixel_width * 4, text="level: " + str(self.level), font=("Arial", 20))
+                    for border in borders:
+                        canvas.move(border, self.pixel_width * j, self.pixel_width * i)
+        canvas.create_text(self.pixel_width * 12, self.pixel_width * 1, text="NEXT", font=("Arial", 20))
+        canvas.create_text(self.pixel_width * 13, self.pixel_width * 6, text="LINES: " + str(self.lines), font=("Arial", 20))
+        canvas.create_text(self.pixel_width * 13, self.pixel_width * 7, text="LEVEL: " + str(self.level), font=("Arial", 20))
 
 grid = GameGrid(22, 10, 30)
 root.bind("a", grid.left)
