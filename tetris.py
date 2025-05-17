@@ -1,3 +1,5 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import random
 import pygame
 import copy
@@ -122,13 +124,19 @@ class GameGrid:
     def dropPiece(self, hardDrop=False):
         self.piece.row += 1
         if self.isValidState():
-            return
+            return True
         else:
             self.piece.row -= 1
             self.placePiece(hardDrop)
             self.resetDefaultPieceState()
         if not self.isValidState():
             self.gameOver = True
+        return False
+
+    def drop(self, event):
+        while self.dropPiece(True):
+            pass
+        self.renderGrid()
 
     def down(self, event):
         if self.piece.row > 1:
@@ -295,6 +303,7 @@ root.bind("k", grid.turnRight)
 root.bind("<Left>", grid.turnLeft)
 root.bind("<Right>", grid.turnRight)
 root.bind("<Down>", grid.down)
+root.bind("<space>", grid.drop)
 
 def game_loop():
     grid.dropPiece()
