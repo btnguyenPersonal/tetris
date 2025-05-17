@@ -9,7 +9,7 @@ from piece import Piece
 
 root = Tk()
 root.title("Tetris")
-canvas = Canvas(root, width=550, height=820)
+canvas = Canvas(root, width=700, height=820)
 canvas.pack()
 
 class GameGrid:
