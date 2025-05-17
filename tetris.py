@@ -259,7 +259,9 @@ class GameGrid:
         canvas.create_text(self.pixel_width * 11, self.pixel_width * 1, anchor="w", text="NEXT", font=("FixedSys", 20))
         if self.scoreFrames > 0:
             if self.scoreText == 'TETRIS!!':
-                canvas.create_text(self.pixel_width * 11, self.pixel_width * 5, anchor="w", text=self.scoreText, fill='red', font=("FixedSys", 20))
+                rainbow = ["red", "orange", "black", "magenta", "blue", "saddlebrown", "darkgreen"]
+                for i in range(len(self.scoreText)):
+                    canvas.create_text(self.pixel_width * 11 + i * 13, self.pixel_width * 5, anchor="w", text=self.scoreText[i], fill=rainbow[(i+self.scoreFrames)%len(rainbow)], font=("FixedSys", 20))
             else:
                 canvas.create_text(self.pixel_width * 11, self.pixel_width * 5, anchor="w", text=self.scoreText, fill='red', font=("FixedSys", 20))
             self.scoreFrames -= 1
@@ -275,6 +277,8 @@ root.bind("s", grid.down)
 root.bind("d", grid.right)
 root.bind("j", grid.turnLeft)
 root.bind("k", grid.turnRight)
+root.bind("<Left>", grid.turnLeft)
+root.bind("<Right>", grid.turnRight)
 
 def game_loop():
     grid.dropPiece()
