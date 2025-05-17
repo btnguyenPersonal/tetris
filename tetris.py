@@ -117,12 +117,12 @@ class GameGrid:
                 pygame.mixer.Sound.play(self.hitSound)
             self.score += [0,100,400,900,2500][linesCollected]
             self.scoreText = ['ERROR','SINGLE!','DOUBLE!','TRIPLE!','TETRIS!!'][linesCollected]
-            self.scoreFrames = 10
+            self.scoreFrames = 30
 
     def dropPiece(self, hardDrop=False):
         self.piece.row += 1
         if self.isValidState():
-            return;
+            return
         else:
             self.piece.row -= 1
             self.placePiece(hardDrop)
@@ -131,8 +131,9 @@ class GameGrid:
             self.gameOver = True
 
     def down(self, event):
-        self.dropPiece(True)
-        self.renderGrid()
+        if self.piece.row > 1:
+            self.dropPiece(True)
+            self.renderGrid()
 
     def turnRight(self, event):
         self.piece.turnRight()
@@ -215,8 +216,9 @@ class GameGrid:
             print("SCORE: " + str(self.score))
             print("LINES: " + str(self.lines))
             print("LEVEL: " + str(self.level))
-            with open("highscore", "w") as f:
-                f.write(str(self.score))
+            if self.score > self.highscore:
+                with open("highscore", "w") as f:
+                    f.write(str(self.score))
             quit()
         renderGrid = copy.deepcopy(self.grid)
         piece = self.piece.getPiece()
@@ -292,6 +294,7 @@ root.bind("j", grid.turnLeft)
 root.bind("k", grid.turnRight)
 root.bind("<Left>", grid.turnLeft)
 root.bind("<Right>", grid.turnRight)
+root.bind("<Down>", grid.down)
 
 def game_loop():
     grid.dropPiece()
