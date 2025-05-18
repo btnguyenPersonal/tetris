@@ -26,7 +26,8 @@ class GameGrid:
     self.cols = cols
     self.pixel_width = pixel_width
     self.grid = []
-    self.level = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+    self.startingLevel = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+    self.level = self.startingLevel
     self.lines = 0
     self.score = 0
     self.next_piece = Piece(0, 4)
@@ -124,7 +125,7 @@ class GameGrid:
       if all(int(x / 100) == 99 for x in self.grid[i]):
         linesCollected += 1
         self.lines += 1
-        if self.lines >= (self.level + 1) * 30:
+        if self.lines >= (self.level - self.startingLevel + 1) * 30:
           self.level += 1
           self.setSong()
         self.setBorderBottomLine(i - 1)
